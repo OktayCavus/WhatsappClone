@@ -28,12 +28,15 @@ class _WhatsappMainState extends State<WhatsappMain>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // ! appBarın saydam olmasını sağlıyor
+      extendBodyBehindAppBar: true,
       // ! NestedScrollView bütün widgetları kaydırmamızı sağlıyor
       body: SafeArea(
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               SliverAppBar(
+                elevation: 0,
                 actions: [
                   IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
                   IconButton(

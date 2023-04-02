@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/screens/conversation_page.dart';
 
 class ChatsPage extends StatelessWidget {
   ChatsPage({super.key});
@@ -25,6 +26,12 @@ class ChatsPage extends StatelessWidget {
           // * sohbetler kadar listtile oluşturacak
           children: snapshot.data!.docs
               .map((doc) => ListTile(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ConversationPage()));
+                    },
                     leading: const CircleAvatar(
                       backgroundImage:
                           NetworkImage('https://placekitten.com/200/200'),
