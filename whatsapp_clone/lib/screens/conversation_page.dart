@@ -1,7 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class ConversationPage extends StatelessWidget {
-  const ConversationPage({super.key});
+class ConversationPage extends StatefulWidget {
+  String userId;
+  String conversationId;
+
+  ConversationPage(
+      {super.key, required this.userId, required this.conversationId});
+
+  @override
+  State<ConversationPage> createState() => _ConversationPageState();
+}
+
+class _ConversationPageState extends State<ConversationPage> {
+  CollectionReference? _ref;
+  final TextEditingController _editingController = TextEditingController();
+  @override
+  void initState() {
+    _ref = FirebaseFirestore.instance
+        // ! widget'a gönderilen collectionID yi yolluyoruz
+        .collection('conversation/${widget.conversationId}/messages');
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,27 +55,36 @@ class ConversationPage extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Align(
-                        alignment: index % 2 == 0
-                            ? Alignment.centerLeft
-                            : Alignment.centerRight,
-                        child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: Theme.of(context).primaryColor),
-                            child: const Text(
-                              'a',
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
-                            ))),
-                  );
-                },
-              ),
+              child: StreamBuilder(
+                  // ! orderBy metodu yollanan mesajların firebase'e sırası ile kaydedilmesi için
+                  stream: _ref!.orderBy('timeStamp').snapshots(),
+                  builder: (context, snapshot) {
+                    return !snapshot.hasData
+                        ? const CircularProgressIndicator()
+                        : ListView(
+                            children: snapshot.data!.docs
+                                .map((document) => ListTile(
+                                      title: Align(
+                                          alignment: widget.userId !=
+                                                  document['senderID']
+                                              ? Alignment.centerLeft
+                                              : Alignment.centerRight,
+                                          child: Container(
+                                              padding: const EdgeInsets.all(8),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  color: Theme.of(context)
+                                                      .primaryColor),
+                                              child: Text(
+                                                document['message'],
+                                                style: const TextStyle(
+                                                    fontSize: 18,
+                                                    color: Colors.white),
+                                              ))),
+                                    ))
+                                .toList());
+                  }),
             ),
             Row(
               children: [
@@ -77,9 +107,11 @@ class ConversationPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: TextField(
-                          decoration: InputDecoration(
+                          // ! controller ile text fiedlin içindeki yazıları alabiliriz
+                          controller: _editingController,
+                          decoration: const InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Type a message'),
                         ),
@@ -94,15 +126,21 @@ class ConversationPage extends StatelessWidget {
                   ),
                 )),
                 Container(
-                  margin: const EdgeInsets.only(right: 5),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColor,
-                      shape: BoxShape.circle),
-                  child: IconButton(
-                      color: Colors.white,
-                      onPressed: () {},
-                      icon: const Icon(Icons.keyboard_voice)),
-                ),
+                    margin: const EdgeInsets.only(right: 5),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        shape: BoxShape.circle),
+                    child: IconButton(
+                        color: Colors.white,
+                        onPressed: () async {
+                          await _ref!.add({
+                            'senderID': widget.userId,
+                            'message': _editingController.text,
+                            'timeStamp': DateTime.now()
+                          });
+                          _editingController.text = '';
+                        },
+                        icon: const Icon(Icons.send))),
               ],
             ),
           ],
