@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:whatsapp_clone/core/locator.dart';
+import 'package:whatsapp_clone/screens/sign_in_page.dart';
 import 'firebase_options.dart';
-import 'package:whatsapp_clone/whatsapp_main.dart';
 
 void main() async {
+  // ! proje başlayınca bu methodu çağırıp ihtiyacımız olan servis classlarını
+  // ! initialize edecek uyhulama çalışınca get_it paketi üzerinden çağıracaz
+  setUpLocators();
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -29,7 +34,7 @@ class MyApp extends StatelessWidget {
           appBarTheme: const AppBarTheme(color: Color(0xff075E54)),
           floatingActionButtonTheme: const FloatingActionButtonThemeData(
               backgroundColor: Color(0xff25D366))),
-      home: const WhatsappMain(),
+      home: const SignInPage(),
     );
   }
 }

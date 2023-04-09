@@ -1,0 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:whatsapp_clone/core/locator.dart';
+import 'package:whatsapp_clone/core/services/auth_service.dart';
+import 'package:whatsapp_clone/viewmodels/base_model.dart';
+
+//! basemodel'de changenotifier yaptık o yüzden  buraya extend ettik tek tek
+// changenotifier işlemleri yapmamak için bir class oldu elimizde
+class SignInModel extends BaseModel {
+  final AuthService _authService = getIt<AuthService>();
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+
+  Future<void> signInn(String userName) async {
+    if (userName.isEmpty) return;
+    busy = true;
+
+    try {
+      var user = await _authService.signIn();
+// ! koleksiyon id'lerini userId ile aynı yapmak istiyoruz çağırması kolay olması için
+// ! bu yüzden .doc kullandık
+      await _firebaseFirestore.collection('profile').doc(user.user!.uid).set(
+          {'userName': userName, 'image': 'https://placekitten.com/200/200'});
+    } catch (e) {
+      busy = false;
+    }
+
+    busy = false;
+  }
+}
