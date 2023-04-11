@@ -22,7 +22,7 @@ class SignInPage extends StatelessWidget {
           body: Container(
             padding: const EdgeInsets.all(8),
             child: model.busy
-                ? const CircularProgressIndicator()
+                ? const Center(child: CircularProgressIndicator())
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
