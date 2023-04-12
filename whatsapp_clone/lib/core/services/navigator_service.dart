@@ -5,6 +5,10 @@ class NavigatorService {
 
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
 
+  pop() {
+    return _navigatorKey.currentState!.pop();
+  }
+
   Future navigateTo(Widget route) {
     return _navigatorKey.currentState!
         .push(MaterialPageRoute(builder: (context) => route));

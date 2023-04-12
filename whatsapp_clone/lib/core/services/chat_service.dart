@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:whatsapp_clone/models/conversations.dart';
+import 'package:whatsapp_clone/models/profile.dart';
 
 class ChatService {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
@@ -18,5 +19,16 @@ class ChatService {
     return ref.snapshots().map((list) => list.docs
         .map((snapshot) => Conversations.fromSnapshot(snapshot))
         .toList());
+  }
+
+  Future<List<Profile>> getContacts() async {
+    var ref = _firebaseFirestore.collection('profile');
+
+    var documents = await ref.get();
+
+// ! QuerySnapshottan profile'a çeviriyoruz burda
+    return documents.docs
+        .map((snapshot) => Profile.fromSnapshot(snapshot))
+        .toList();
   }
 }

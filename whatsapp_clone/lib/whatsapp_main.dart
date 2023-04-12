@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/core/locator.dart';
+import 'package:whatsapp_clone/screens/contacts_page.dart';
 import 'package:whatsapp_clone/screens/index.dart';
+import 'package:whatsapp_clone/viewmodels/main_model.dart';
 
 class WhatsappMain extends StatefulWidget {
   const WhatsappMain({super.key});
@@ -27,6 +30,7 @@ class _WhatsappMainState extends State<WhatsappMain>
 
   @override
   Widget build(BuildContext context) {
+    var model = getIt<MainModel>();
     return Scaffold(
       // ! appBarın saydam olmasını sağlıyor
       extendBodyBehindAppBar: true,
@@ -82,7 +86,14 @@ class _WhatsappMainState extends State<WhatsappMain>
       ),
       floatingActionButton: _showMessage
           ? FloatingActionButton(
-              child: const Icon(Icons.message), onPressed: () {})
+              child: const Icon(Icons.message),
+              // ! method future dönüyor dikkat
+              onPressed: () {
+                // ! BURANIN DÜZELTİLMESİ LAZIM
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const ContactsPage(),
+                ));
+              })
           : null,
     );
   }

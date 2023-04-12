@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = ThemeData();
     return FutureProvider(
+      // * ÇÖZÜLDÜ
       // ! FutureProvider olayında sıkıntı var gibi koda bakan biri issue atabilir mi
       // ! amacım auth_service ve sign_in_model dosyalarındaki
       // ! currentUser getter'ını kullanarak kayıtlı biri varsa
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
       create: (context) => Future.value(getIt<SignInModel>().currentUser),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        // ! BURASI ÖNEMLİ GLOBAL KEY İÇİN
         navigatorKey: getIt<NavigatorService>().navigatorKey,
         title: 'Whatsapp Clone',
         theme: theme.copyWith(
