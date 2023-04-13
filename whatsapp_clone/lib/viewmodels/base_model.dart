@@ -4,6 +4,7 @@ import 'package:whatsapp_clone/core/locator.dart';
 import '../core/services/navigator_service.dart';
 
 abstract class BaseModel with ChangeNotifier {
+  // ! navigate işlemi her sayfada olabileceği için buraya koyduk
   final NavigatorService navigatorService = getIt<NavigatorService>();
 
   // ! burası adam signin'e basınca sistem gecikmesi olacağı için

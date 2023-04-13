@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
@@ -9,10 +10,8 @@ import 'package:whatsapp_clone/viewmodels/chats_model.dart';
 class ChatsPage extends StatelessWidget {
   //final String userId = '7y6ZJDW2maQI1oTNjgxM0rpDeDn1';
   final String userId = 'kWjle2wQNzUn3ruRFYeCLjLMpuV2';
-  ChatsPage({super.key});
+  const ChatsPage({super.key});
   @override
-  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-
   @override
   Widget build(BuildContext context) {
     var model = GetIt.instance<ChatsModel>();
@@ -43,13 +42,9 @@ class ChatsPage extends StatelessWidget {
             children: snapshot.data!
                 .map((doc) => ListTile(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ConversationPage(
-                                      userId: userId,
-                                      conversationId: (doc.idd).toString(),
-                                    )));
+                        model.navigatorService.navigateTo(ConversationPage(
+                            userId: userId,
+                            conversationId: (doc.idd).toString()));
                       },
                       leading: CircleAvatar(
                         backgroundImage:

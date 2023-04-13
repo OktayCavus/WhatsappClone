@@ -5,8 +5,8 @@ class NavigatorService {
 
   GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
 
-  pop() {
-    return _navigatorKey.currentState!.pop();
+  void pop() {
+    _navigatorKey.currentState!.pop();
   }
 
   Future navigateTo(Widget route) {

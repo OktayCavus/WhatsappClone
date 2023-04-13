@@ -20,7 +20,7 @@ class SignInModel extends BaseModel {
       var user = await _authService.signIn();
 // ! koleksiyon id'lerini userId ile aynı yapmak istiyoruz çağırması kolay olması için
 // ! bu yüzden .doc kullandık
-      await _firebaseFirestore.collection('profile').doc(user.user!.uid).set(
+      await _firebaseFirestore.collection('profile').doc(user.uid).set(
           {'userName': userName, 'image': 'https://placekitten.com/200/200'});
 // ! burayı basemodeli extend ettiğimiz için ordan çekiyor
       await navigatorService.navigateAndReplace(const WhatsappMain());

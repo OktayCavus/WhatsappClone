@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:whatsapp_clone/core/locator.dart';
 import 'package:whatsapp_clone/core/services/chat_service.dart';
 
 import 'package:whatsapp_clone/models/profile.dart';
+import 'package:whatsapp_clone/screens/conversation_page.dart';
 import 'package:whatsapp_clone/viewmodels/base_model.dart';
 
 class ContactsModel extends BaseModel {
@@ -15,5 +17,12 @@ class ContactsModel extends BaseModel {
         .toList();
 
     return filteredContacts;
+  }
+
+  Future<void> startConversation(User user, Profile profile) async {
+    var conversation = await _chatService.startConversation(user, profile);
+
+    return navigatorService.navigateTo(ConversationPage(
+        userId: user.uid, conversationId: '${conversation.idd}'));
   }
 }

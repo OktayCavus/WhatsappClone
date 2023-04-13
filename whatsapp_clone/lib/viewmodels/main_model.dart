@@ -1,9 +1,8 @@
-import 'package:whatsapp_clone/core/services/navigator_service.dart';
 import 'package:whatsapp_clone/screens/contacts_page.dart';
 import 'package:whatsapp_clone/viewmodels/base_model.dart';
 
 class MainModel extends BaseModel {
   Future<void> navigateToContacts() {
-    return NavigatorService().navigateTo(const ContactsPage());
+    return navigatorService.navigateTo(const ContactsPage());
   }
 }

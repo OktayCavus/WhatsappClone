@@ -31,7 +31,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     ThemeData theme = ThemeData();
     return FutureProvider(
-      // * ÇÖZÜLDÜ
       // ! FutureProvider olayında sıkıntı var gibi koda bakan biri issue atabilir mi
       // ! amacım auth_service ve sign_in_model dosyalarındaki
       // ! currentUser getter'ını kullanarak kayıtlı biri varsa

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:whatsapp_clone/models/conversations.dart';
 import 'package:whatsapp_clone/models/profile.dart';
 
@@ -30,5 +31,20 @@ class ChatService {
     return documents.docs
         .map((snapshot) => Profile.fromSnapshot(snapshot))
         .toList();
+  }
+
+  Future<Conversations> startConversation(User user, Profile profile) async {
+    var ref = _firebaseFirestore.collection('conversation');
+
+    var documentRef = await ref.add({
+      'displayMessage': ' ',
+      'members': [user.uid, profile.id]
+    });
+
+    return Conversations(
+        idd: documentRef.id,
+        displayMessage: "",
+        name: profile.userName,
+        profileImage: profile.image);
   }
 }

@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:whatsapp_clone/core/locator.dart';
 import 'package:whatsapp_clone/models/profile.dart';
 import 'package:whatsapp_clone/viewmodels/contacts_model.dart';
@@ -34,6 +36,9 @@ class ContactsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var model = getIt<ContactsModel>();
+    // ! Provider bize main dosyasına currentUser'ı döndürüyordu zaten
+    var user = Provider.of<User?>(context);
+
     return FutureBuilder(
         future: model.getContacts(query),
         builder: (BuildContext context, AsyncSnapshot<List<Profile>> snapshot) {
@@ -69,8 +74,12 @@ class ContactsList extends StatelessWidget {
                 ),
                 title: Text('New Contact'),
               ),
+              // ! 3 nokta spread collection demek
               ...snapshot.data!
                   .map((profile) => ListTile(
+                        onTap: () => user == null
+                            ? print('null')
+                            : model.startConversation(user, profile),
                         leading: CircleAvatar(
                           backgroundColor: const Color(0xff25D366),
                           backgroundImage: NetworkImage('${profile.image}'),
@@ -119,6 +128,8 @@ class ContactSearchDelegate extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     return ContactsList(
+      // ! sağdaki query String get query => _queryTextController.text; burdan geliyor
+      // ! yani search alanına gönderilen değer
       query: query,
     );
   }
