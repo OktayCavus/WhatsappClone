@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:whatsapp_clone/core/locator.dart';
+import 'package:whatsapp_clone/models/conversations.dart';
 import 'package:whatsapp_clone/viewmodels/conversation_model.dart';
 
 class ConversationPage extends StatefulWidget {
   String userId;
-  String conversationId;
+  Conversations conversation;
 
   ConversationPage(
-      {super.key, required this.userId, required this.conversationId});
+      {super.key, required this.userId, required this.conversation});
 
   @override
   State<ConversationPage> createState() => _ConversationPageState();
@@ -27,7 +28,7 @@ class _ConversationPageState extends State<ConversationPage> {
   void initState() {
     _ref = FirebaseFirestore.instance
         // ! widget'a gönderilen collectionID yi yolluyoruz
-        .collection('conversation/${widget.conversationId}/messages');
+        .collection('conversation/${widget.conversation}/messages');
 
     // ! focusNode'u initialize edelim
     _focusNode = FocusNode();
@@ -53,14 +54,14 @@ class _ConversationPageState extends State<ConversationPage> {
         appBar: AppBar(
           titleSpacing: -5,
           title: Row(
-            children: const [
+            children: [
               CircleAvatar(
                 backgroundImage:
-                    NetworkImage('https://placekitten.com/200/200'),
+                    NetworkImage('${widget.conversation.profileImage}'),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 8),
-                child: Text('data'),
+                padding: const EdgeInsets.only(left: 8),
+                child: Text('${widget.conversation.name}'),
               ),
             ],
           ),
@@ -83,7 +84,8 @@ class _ConversationPageState extends State<ConversationPage> {
                   onTap: () => _focusNode!.unfocus(),
                   child: StreamBuilder(
                       // ! orderBy metodu yollanan mesajların firebase'e sırası ile kaydedilmesi için
-                      stream: model.getConversation(widget.conversationId),
+                      stream:
+                          model.getConversation('${widget.conversation.idd}'),
                       builder: (context, snapshot) {
                         return !snapshot.hasData
                             ? const CircularProgressIndicator()
@@ -91,18 +93,6 @@ class _ConversationPageState extends State<ConversationPage> {
                                 controller: _scrollController,
                                 children: snapshot.data!.docs
                                     .map((document) => ListTile(
-                                          title: document['media'] == null ||
-                                                  document['media'].isEmpty
-                                              ? Container()
-                                              : Align(
-                                                  alignment:
-                                                      Alignment.bottomRight,
-                                                  child: SizedBox(
-                                                    height: 150,
-                                                    child: Image.network(
-                                                        document['media']),
-                                                  ),
-                                                ),
                                           subtitle: Align(
                                               alignment: widget.userId !=
                                                       document['senderID']

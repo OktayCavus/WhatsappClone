@@ -22,7 +22,7 @@ class ContactsModel extends BaseModel {
   Future<void> startConversation(User user, Profile profile) async {
     var conversation = await _chatService.startConversation(user, profile);
 
-    return navigatorService.navigateTo(ConversationPage(
-        userId: user.uid, conversationId: '${conversation.idd}'));
+    return navigatorService.navigateTo(
+        ConversationPage(userId: user.uid, conversation: conversation));
   }
 }

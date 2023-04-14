@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       // ! currentUser getter'ını kullanarak kayıtlı biri varsa
       // ! WhatsappMain'e yoksa SignInPage' gitmesini sağlamak
       // ! ama firebase'deki profile collection'u silince gene WhatsappMain'e atıyor
-      initialData: Future.value(getIt<SignInModel>().currentUser),
+      initialData: getIt<SignInModel>().currentUser,
       create: (context) => Future.value(getIt<SignInModel>().currentUser),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

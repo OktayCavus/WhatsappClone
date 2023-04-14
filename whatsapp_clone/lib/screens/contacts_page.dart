@@ -77,9 +77,7 @@ class ContactsList extends StatelessWidget {
               // ! 3 nokta spread collection demek
               ...snapshot.data!
                   .map((profile) => ListTile(
-                        onTap: () => user == null
-                            ? print('null')
-                            : model.startConversation(user, profile),
+                        onTap: () => model.startConversation(user!, profile),
                         leading: CircleAvatar(
                           backgroundColor: const Color(0xff25D366),
                           backgroundImage: NetworkImage('${profile.image}'),

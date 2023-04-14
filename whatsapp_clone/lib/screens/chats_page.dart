@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -9,12 +8,12 @@ import 'package:whatsapp_clone/viewmodels/chats_model.dart';
 
 class ChatsPage extends StatelessWidget {
   //final String userId = '7y6ZJDW2maQI1oTNjgxM0rpDeDn1';
-  final String userId = 'kWjle2wQNzUn3ruRFYeCLjLMpuV2';
   const ChatsPage({super.key});
-  @override
+
   @override
   Widget build(BuildContext context) {
     var model = GetIt.instance<ChatsModel>();
+    var user = Provider.of<User>(context);
 
     return ChangeNotifierProvider(
       create: (context) => model,
@@ -23,7 +22,7 @@ class ChatsPage extends StatelessWidget {
         // ! where filtreleme yapmak için ilki sorgulamak istediğimiz alan (members)
         stream:
             //firebaseFirestore.collection('conversation').where('members' , arrayContains: userId).snapshots();
-            model.conversations(userId),
+            model.conversations(user.uid),
 
         builder: (context, snapshot) {
           // * Stream'de bir hata oluşursa o hatayı döndürecek
@@ -43,8 +42,7 @@ class ChatsPage extends StatelessWidget {
                 .map((doc) => ListTile(
                       onTap: () {
                         model.navigatorService.navigateTo(ConversationPage(
-                            userId: userId,
-                            conversationId: (doc.idd).toString()));
+                            userId: user.uid, conversation: doc));
                       },
                       leading: CircleAvatar(
                         backgroundImage:

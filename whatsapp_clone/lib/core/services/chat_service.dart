@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:whatsapp_clone/models/conversations.dart';
 import 'package:whatsapp_clone/models/profile.dart';
 
@@ -12,14 +13,37 @@ class ChatService {
     var ref = _firebaseFirestore
         .collection('conversation')
         .where('members', arrayContains: userId);
+
+// ! bütün userları local değişkene tamamlamaya çalışacaz
+// ! bu kodla da future'dan stream'e çeviriyoruz
+    var profileStreams = getContacts().asStream();
+
+    var conversationsStream = ref.snapshots();
+// ! burası 2 streami birleştirmek
+    return Rx.combineLatest2(
+        conversationsStream,
+        profileStreams,
+        (QuerySnapshot conversation, List<Profile> profiles) =>
+            conversation.docs.map((snapshot) {
+              // ! members arrayi içindeki bize ait olmayan user'ı çekip
+              // ! bu bilgiyi fromSnapshot'a yollucaz
+
+              List<String> members = List.from(snapshot['members']);
+
+              var profile = profiles.firstWhere((element) =>
+                  element.id ==
+                  members.firstWhere((member) => member == userId));
+              return Conversations.fromSnapshot(snapshot, profile);
+            }).toList());
+
     // ! ref.snapshots olunca querySnapshot oluyor o yüzden map işlemi uyguluyoruz
     // ! 2 map uygulama sebebi querySnapshot firebase'deki bütün filtrelenen
     // ! conversationları döndürüyor . bu conversation içindeki her bir dökümanı
     // ! map' ten objeye çevirmek istiyoruz bu yüzden 2.map yapıluyır
     // ! map sonucu ıterable dönüyor onu listeye çevirmek gerekiyor
-    return ref.snapshots().map((list) => list.docs
+    /* return ref.snapshots().map((list) => list.docs
         .map((snapshot) => Conversations.fromSnapshot(snapshot))
-        .toList());
+        .toList());*/
   }
 
   Future<List<Profile>> getContacts() async {
@@ -35,7 +59,7 @@ class ChatService {
 
   Future<Conversations> startConversation(User user, Profile profile) async {
     var ref = _firebaseFirestore.collection('conversation');
-
+// ! burda 2 kişi arasında sohbeti başlattık
     var documentRef = await ref.add({
       'displayMessage': ' ',
       'members': [user.uid, profile.id]
